@@ -1,0 +1,268 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VidScribe - Upload Video</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'upload.css' %}">
+</head>
+
+<body>
+    <div class="noise-overlay"></div>
+    <div class="floating-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+        <div class="shape shape3"></div>
+    </div>
+
+    <header>
+        <div class="logo-container">
+            <div class="logo-icon">
+                <span class="play-triangle"></span>
+                <span class="sound-wave"></span>
+            </div>
+            <h1>Vid<span class="accent">Scribe</span></h1>
+        </div>
+        <nav>
+            <a href="/" class="nav-link">Home</a>
+        </nav>
+    </header>
+
+    <main class="upload-container">
+        <div class="upload-card">
+            <h2>Transform Your <span class="accent">Video</span></h2>
+            <p class="upload-intro">Upload your video, select languages, and watch the magic happen.</p>
+
+            <div class="upload-steps">
+                <div class="step active">
+                    <div class="step-indicator">1</div>
+                    <span>Upload</span>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-indicator">2</div>
+                    <span>Process</span>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-indicator">3</div>
+                    <span>Download</span>
+                </div>
+            </div>
+
+            <form action="" method="POST" class="upload-form" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="upload-drop-area">
+                    <div class="upload-icon"></div>
+                    <p>Drag & drop your video file</p>
+                    <p class="upload-subtitle">or</p>
+                    <label for="video-upload" class="upload-button">Browse Files</label>
+                    <input type="file" required name="video" id="video-upload" accept="video/*" class="file-input">
+                    <p class="file-format">Supported formats: MP4, MOV, AVI, WMV (max 10GB)</p>
+                </div>
+
+                <div class="selected-file-container">
+                    <div class="selected-file">
+                        <div class="file-preview"></div>
+                        <div class="file-info">
+                            <p class="file-name">No file selected</p>
+                            <div class="file-actions">
+                                <button type="button" class="remove-file-btn">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="language-options">
+                    <div class="language-option">
+                        <label for="source-language">Source Language</label>
+                        <div class="custom-select">
+                            <select id="source-language" name="source-language" required>
+                                <option value="" disabled selected>Select language</option>
+                                <option value="en">English</option>
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                                <option value="de">German</option>
+                                <option value="it">Italian</option>
+                                <option value="pt">Portuguese</option>
+                                <option value="ru">Russian</option>
+                                <option value="ja">Japanese</option>
+                                <option value="zh">Chinese (Mandarin)</option>
+                                <option value="ko">Korean</option>
+                                <option value="ar">Arabic</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="language-option">
+                        <label for="target-language">Target Language</label>
+                        <div class="custom-select">
+                            <select id="target-language" name="target-language" required>
+                                <option value="" disabled selected>Select language</option>
+                                <option value="en">English</option>
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                                <option value="de">German</option>
+                                <option value="it">Italian</option>
+                                <option value="pt">Portuguese</option>
+                                <option value="ru">Russian</option>
+                                <option value="ja">Japanese</option>
+                                <option value="zh">Chinese (Mandarin)</option>
+                                <option value="ko">Korean</option>
+                                <option value="ar">Arabic</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="advanced-options">
+                    <div class="advanced-toggle">
+                        <span>Advanced Options</span>
+                        <div class="toggle-icon"></div>
+                    </div>
+                    <div class="advanced-settings">
+                        <div class="setting-option">
+                            <label for="transcription-quality">Transcription Quality</label>
+                            <div class="custom-select">
+                                <select id="transcription-quality" name="quality">
+                                    <option value="standard">Standard</option>
+                                    <option value="premium" selected>Premium</option>
+                                    <option value="ultra">Ultra</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="setting-option">
+                            <label for="format">Output Format</label>
+                            <div class="custom-select">
+                                <select id="format" name="format">
+                                    <option value="txt">Plain Text (.txt)</option>
+                                    <option value="srt" selected>Subtitles (.srt)</option>
+                                    <option value="vtt">Web Subtitles (.vtt)</option>
+                                    <option value="docx">Word Document (.docx)</option>
+                                    <option value="pdf">PDF format (.pdf)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="setting-option">
+                            <div class="checkbox-container">
+                                <input type="checkbox" id="timestamps" name="timestamps" checked>
+                                <label for="timestamps">Include timestamps</label>
+                            </div>
+                        </div>
+                        <div class="setting-option">
+                            <div class="checkbox-container">
+                                <input type="checkbox" id="speaker-id" name="speaker-id">
+                                <label for="speaker-id">Speaker identification</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" id="transcribe-btn" class="cta-button">
+                    <span class="cta-text">Start Transcription</span>
+                    <span class="cta-arrow">→</span>
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h3>Vid<span class="accent">Scribe</span></h3>
+            </div>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Support</a>
+            </div>
+            <div class="footer-copyright">
+                © 2025 VidScribe Technologies. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // JavaScript for file upload functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            const fileInput = document.getElementById('video-upload');
+            const dropArea = document.querySelector('.upload-drop-area');
+            const fileNameDisplay = document.querySelector('.file-name');
+            const selectedFileContainer = document.querySelector('.selected-file-container');
+            const removeFileBtn = document.querySelector('.remove-file-btn');
+
+            // File drop functionality
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight() {
+                dropArea.classList.add('highlight');
+            }
+
+            function unhighlight() {
+                dropArea.classList.remove('highlight');
+            }
+
+            dropArea.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                fileInput.files = files;
+                updateFileInfo();
+            }
+
+            // File selection via browse button
+            fileInput.addEventListener('change', updateFileInfo);
+
+            function updateFileInfo() {
+                if (fileInput.files.length > 0) {
+                    const fileName = fileInput.files[0].name;
+                    fileNameDisplay.textContent = fileName;
+                    selectedFileContainer.classList.add('has-file');
+                    dropArea.classList.add('has-file');
+                } else {
+                    fileNameDisplay.textContent = 'No file selected';
+                    selectedFileContainer.classList.remove('has-file');
+                    dropArea.classList.remove('has-file');
+                }
+            }
+
+            // Remove file
+            removeFileBtn.addEventListener('click', function () {
+                fileInput.value = '';
+                updateFileInfo();
+            });
+
+            // Advanced options toggle
+            const advancedToggle = document.querySelector('.advanced-toggle');
+            const advancedSettings = document.querySelector('.advanced-settings');
+
+            advancedToggle.addEventListener('click', function () {
+                advancedSettings.classList.toggle('open');
+                advancedToggle.classList.toggle('open');
+            });
+        });
+    </script>
+</body>
+
+</html>
