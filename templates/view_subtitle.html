@@ -1,0 +1,598 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VidScribe - View Results</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'view_subtitle.css' %}">
+    <!-- Add WaveSurfer.js library -->
+    <script src="https://unpkg.com/wavesurfer.js@6/dist/wavesurfer.min.js"></script>
+</head>
+
+<body>
+    <div class="noise-overlay"></div>
+    <div class="floating-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+        <div class="shape shape3"></div>
+    </div>
+
+    <header>
+        <div class="logo-container">
+            <div class="logo-icon">
+                <span class="play-triangle"></span>
+                <span class="sound-wave"></span>
+            </div>
+            <h1>Vid<span class="accent">Scribe</span></h1>
+        </div>
+        <nav>
+            <a href="/" class="nav-link">Home</a>
+            <a href="/upload" class="nav-link">Upload</a>
+            <a href="/dashboard" class="nav-link">Dashboard</a>
+            <button class="logout-btn">Logout</button>
+        </nav>
+    </header>
+
+    <main class="view-container">
+        <div class="view-card">
+            <h2>Your <span class="accent">Results</span></h2>
+            <p class="view-intro">Video transcription and translation complete. Play, edit, or download your results.
+            </p>
+
+            {% if subtitle_url %}
+            <input type="hidden" value="{{user_subtitle.id}}" id="profile-id">
+            <div class="media-container">
+                <div class="audio-player">
+                    <audio id="audio-element" controls>
+                        <source src="{{ audio_url }}" type="audio/mp3">
+                        <track id="subtitle-track" kind="subtitles" src="{{ subtitle_url }}"
+                            srclang="{{ user_profile.target_language }}" label="{{ user_profile.target_language }}"
+                            default>
+                        Your browser does not support the audio tag.
+                    </audio>
+                    <div class="audio-visualization">
+                        <div class="wave-container">
+                            <div class="waveform"></div>
+                        </div>
+                        <div class="timestamp">00:00 / 00:00</div>
+                    </div>
+                </div>
+
+                <!-- Full Subtitle Viewer Section -->
+                <div class="subtitle-viewer">
+                    <div class="subtitle-actions">
+                        <div class="subtitle-format-selector">
+                            <label for="subtitle-format">Format:</label>
+                            <div class="custom-select">
+                                <select id="subtitle-format">
+                                    <option value="srt" selected>SRT</option>
+                                    <option value="vtt">VTT</option>
+                                    <option value="plain">Plain Text</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <textarea id="subtitle-full-text" class="subtitle-textarea" readonly>Loading subtitles...</textarea>
+
+                    <div class="timestamp-jump">
+                        <label for="jump-to-time">Jump to time:</label>
+                        <input type="text" id="jump-to-time" class="timestamp-input" placeholder="00:00:00">
+                        <button id="jump-button" class="action-button">Jump</button>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <p>No subtitle found. Please upload a video first.</p>
+            {% endif %}
+
+            <div class="action-bar">
+                <div class="action-group">
+                    <h4>Download</h4>
+                    <div class="action-buttons">
+                        <a href="{{ user_subtitle.subtitle.url }}" class="action-button" data-format="srt" download>
+                            <span class="action-icon srt-icon"></span>
+                            <span>SRT</span>
+                        </a>
+                        <a href="{{ user_subtitle.webVit.url }}" class="action-button" data-format="vtt" download>
+                            <span class="action-icon srt-icon"></span>
+                            <span>VTT</span>
+                        </a>
+                        <a href="/download_subtitle_format/{{user_subtitle.id}}/txt" class="action-button">
+                            <span class="action-icon txt-icon"></span>
+                            <span>TXT</span>
+                        </a>
+                        <a href="/download_subtitle_format/{{user_subtitle.id}}/docx" class="action-button">
+                            <span class="action-icon docx-icon"></span>
+                            <span>DOCX</span>
+                        </a>
+                        <a href="/download_subtitle_format/{{user_subtitle.id}}/pdf" class="action-button">
+                            <span class="action-icon pdf-icon"></span>
+                            <span>PDF</span>
+                        </a>
+
+                    </div>
+                </div>
+                <div class="action-group">
+                    <h4>Share</h4>
+                    <div class="action-buttons">
+                        <button id="copy-button" class="action-button share-button" data-platform="copy">
+                            <span class="action-icon link-icon"></span>
+                            <span>Copy Link</span>
+                        </button>
+                        <button class="action-button share-button" data-platform="facebook">
+                            <span class="action-icon facebook-icon"></span>
+                            <span>Facebook</span>
+                        </button>
+                        <button class="action-button share-button" data-platform="whatsapp">
+                            <span class="action-icon whatsapp-icon"></span>
+                            <span>WhatsApp</span>
+                        </button>
+                        <button class="action-button share-button" data-platform="instagram">
+                            <span class="action-icon instagram-icon"></span>
+                            <span>Instagram</span>
+                        </button>
+                        <button class="action-button share-button" data-platform="twitter">
+                            <span class="action-icon twitter-icon"></span>
+                            <span>Twitter</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="edit-bar">
+                <button id="edit-transcript" class="secondary-button">
+                    <span class="edit-icon"></span>
+                    <span>Edit Transcript</span>
+                </button>
+                <a href="/upload" id="new-upload" class="cta-button">
+                    <span class="cta-text">New Upload</span>
+                    <span class="cta-arrow">→</span>
+                </a>
+            </div>
+
+            <!-- Modal Container -->
+            <div id="edit-modal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Edit <span class="accent">Transcript</span></h3>
+                        <button class="close-modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <textarea id="edit-transcript-text" class="edit-textarea"
+                            placeholder="Edit your transcript here..."></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="cancel-edit" class="secondary-button">Cancel</button>
+                        <button id="save-edit" class="cta-button">
+                            <span class="cta-text">Save Changes</span>
+                            <span class="cta-arrow">→</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success Toast for saving edits -->
+            <div class="toast" id="edit-success-toast">
+                <div class="toast-icon success"></div>
+                <div class="toast-message">Transcript updated successfully!</div>
+            </div>
+
+            <!-- Error Toast -->
+            <div class="toast" id="edit-error-toast">
+                <div class="toast-icon error"></div>
+                <div class="toast-message">Error saving transcript.</div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h3>Vid<span class="accent">Scribe</span></h3>
+            </div>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Support</a>
+                <a href="#">FAQ</a>
+                <a href="#">Contact</a>
+            </div>
+            <div class="footer-copyright">
+                © 2025 VidScribe Technologies. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Success Toast -->
+    <div class="toast" id="success-toast">
+        <div class="toast-icon success"></div>
+        <div class="toast-message">Link copied to clipboard!</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const audioElement = document.getElementById('audio-element');
+            const subtitleTextarea = document.getElementById('subtitle-full-text');
+            const subtitleFormatSelect = document.getElementById('subtitle-format');
+            const copyButton = document.getElementById('copy-button');
+            const jumpToTimeInput = document.getElementById('jump-to-time');
+            const jumpButton = document.getElementById('jump-button');
+
+            let srtContent = '';
+            let vttContent = '';
+            let plainTextContent = '';
+
+            // Load full subtitle content
+            fetch('{{ subtitle_url }}')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch subtitle: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    srtContent = data;
+                    subtitleTextarea.value = srtContent;
+
+                    // Parse SRT to create plain text version
+                    plainTextContent = convertSrtToPlainText(srtContent);
+
+                    // Convert SRT to VTT if we have SRT
+                    if (srtContent.trim().includes(' --> ')) {
+                        vttContent = convertSrtToVtt(srtContent);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading subtitle content:', error);
+                    subtitleTextarea.value = 'Error loading subtitles. Please try again.';
+                });
+
+            // Format selector event
+            if (subtitleFormatSelect) {
+                subtitleFormatSelect.addEventListener('change', function () {
+                    const format = this.value;
+
+                    if (format === 'srt') {
+                        subtitleTextarea.value = srtContent;
+                    } else if (format === 'vtt') {
+                        subtitleTextarea.value = vttContent;
+                    } else if (format === 'plain') {
+                        subtitleTextarea.value = plainTextContent;
+                    }
+                });
+            }
+
+            // Copy button event
+            if (copyButton) {
+                copyButton.addEventListener('click', function () {
+                    // Copy current page URL
+                    const textToCopy = window.location.href;
+                    navigator.clipboard.writeText(textToCopy)
+                        .then(() => {
+                            // Show success toast
+                            const successToast = document.getElementById('success-toast');
+                            showToast(successToast);
+                        })
+                        .catch(err => {
+                            console.error('Failed to copy URL:', err);
+                        });
+                });
+            }
+
+            // Jump to time button event
+            if (jumpButton && jumpToTimeInput && audioElement) {
+                jumpButton.addEventListener('click', function () {
+                    const timeString = jumpToTimeInput.value;
+                    const seconds = convertTimeStringToSeconds(timeString);
+
+                    if (!isNaN(seconds)) {
+                        audioElement.currentTime = seconds;
+                    }
+                });
+            }
+
+            // Create WaveSurfer instance
+            if (document.querySelector('.waveform')) {
+                try {
+                    const wavesurfer = WaveSurfer.create({
+                        container: '.waveform',
+                        waveColor: '#4f46e5',
+                        progressColor: '#818cf8',
+                        cursorColor: '#c084fc',
+                        barWidth: 2,
+                        barRadius: 3,
+                        cursorWidth: 1,
+                        height: 60,
+                        barGap: 3,
+                        responsive: true
+                    });
+
+                    // Load audio
+                    wavesurfer.load('{{ audio_url }}');
+
+                    // Update timestamp display
+                    const timeDisplay = document.querySelector('.timestamp');
+
+                    function formatTime(seconds) {
+                        const minutes = Math.floor(seconds / 60);
+                        const secs = Math.floor(seconds % 60);
+                        return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                    }
+
+                    wavesurfer.on('audioprocess', function () {
+                        const currentTime = wavesurfer.getCurrentTime();
+                        const duration = wavesurfer.getDuration() || 0;
+                        timeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+                    });
+
+                    wavesurfer.on('ready', function () {
+                        const duration = wavesurfer.getDuration();
+                        timeDisplay.textContent = `00:00 / ${formatTime(duration)}`;
+
+                        // Connect audio element to wavesurfer
+                        audioElement.addEventListener('play', () => {
+                            wavesurfer.play();
+                        });
+
+                        audioElement.addEventListener('pause', () => {
+                            wavesurfer.pause();
+                        });
+
+                        wavesurfer.on('play', () => {
+                            if (audioElement.paused) audioElement.play();
+                        });
+
+                        wavesurfer.on('pause', () => {
+                            if (!audioElement.paused) audioElement.pause();
+                        });
+
+                        // Make seek work in both directions
+                        wavesurfer.on('seek', (position) => {
+                            const seekTo = position * wavesurfer.getDuration();
+                            audioElement.currentTime = seekTo;
+                        });
+
+                        audioElement.addEventListener('seeked', () => {
+                            const position = audioElement.currentTime / wavesurfer.getDuration();
+                            wavesurfer.seekTo(position);
+                        });
+                    });
+                } catch (e) {
+                    console.error('Error initializing WaveSurfer:', e);
+                }
+            }
+
+            // Helper functions
+            function convertSrtToVtt(srtContent) {
+                // Replace SRT header with WebVTT header
+                let vttContent = "WEBVTT\n\n";
+
+                // Process SRT content to WebVTT format
+                const lines = srtContent.split('\n');
+                let inSubtitle = false;
+
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+
+                    // Skip index numbers (purely numeric lines)
+                    if (/^\d+$/.test(line)) {
+                        continue;
+                    }
+
+                    // Add timestamp lines and text
+                    if (line.includes(' --> ')) {
+                        // Convert SRT timestamp format to WebVTT if needed
+                        const formattedLine = line.replace(/,/g, '.');
+                        vttContent += formattedLine + '\n';
+                        inSubtitle = true;
+                    } else if (inSubtitle && line !== '') {
+                        vttContent += line + '\n';
+                    } else if (inSubtitle && line === '') {
+                        vttContent += '\n';
+                        inSubtitle = false;
+                    }
+                }
+
+                return vttContent;
+            }
+
+            function convertSrtToPlainText(srtContent) {
+                let plainText = '';
+                const lines = srtContent.split('\n');
+                let currentText = '';
+
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+
+                    // Skip index numbers and timestamp lines
+                    if (/^\d+$/.test(line) || line.includes(' --> ')) {
+                        continue;
+                    }
+
+                    // Add text content
+                    if (line !== '') {
+                        currentText += line + ' ';
+                    } else if (currentText !== '') {
+                        // End of a subtitle block
+                        plainText += currentText.trim() + '\n\n';
+                        currentText = '';
+                    }
+                }
+
+                // Add the last block if exists
+                if (currentText !== '') {
+                    plainText += currentText.trim();
+                }
+
+                return plainText;
+            }
+
+            function convertTimeStringToSeconds(timeString) {
+                // Format can be either HH:MM:SS or MM:SS
+                let parts;
+
+                if (timeString.includes(':')) {
+                    parts = timeString.split(':');
+                } else {
+                    return NaN;
+                }
+
+                let seconds = 0;
+
+                if (parts.length === 3) {
+                    // HH:MM:SS format
+                    seconds = parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseFloat(parts[2]);
+                } else if (parts.length === 2) {
+                    // MM:SS format
+                    seconds = parseInt(parts[0]) * 60 + parseFloat(parts[1]);
+                }
+
+                return seconds;
+            }
+
+            // Function to show toast messages
+            window.showToast = function (toastElement) {
+                toastElement.classList.add('show');
+
+                // Auto hide after 3 seconds
+                setTimeout(function () {
+                    toastElement.classList.remove('show');
+                }, 3000);
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Elements
+            const profileId = document.getElementById('profile-id')?.value;
+            const editButton = document.getElementById('edit-transcript');
+            const modal = document.getElementById('edit-modal');
+            const closeModal = document.querySelector('.close-modal');
+            const cancelEdit = document.getElementById('cancel-edit');
+            const saveEdit = document.getElementById('save-edit');
+            const editTextarea = document.getElementById('edit-transcript-text');
+            const subtitleTextarea = document.getElementById('subtitle-full-text');
+            const editSuccessToast = document.getElementById('edit-success-toast');
+            const editErrorToast = document.getElementById('edit-error-toast');
+
+            if (!editButton || !modal) return;
+
+            // Open modal when edit button is clicked
+            editButton.addEventListener('click', function () {
+                // Copy content from subtitle textarea to edit textarea
+                editTextarea.value = subtitleTextarea.value;
+
+                // Show modal with animation
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden'; // Prevent scrolling behind modal
+
+                // Focus on textarea
+                setTimeout(() => {
+                    editTextarea.focus();
+                }, 300);
+            });
+
+            // Close modal functions
+            function closeModalFunction() {
+                modal.style.display = 'none';
+                document.body.style.overflow = ''; // Re-enable scrolling
+            }
+
+            // Close modal when X is clicked
+            closeModal.addEventListener('click', closeModalFunction);
+
+            // Close modal when Cancel is clicked
+            cancelEdit.addEventListener('click', closeModalFunction);
+
+            // Close modal when clicking outside of it
+            window.addEventListener('click', function (event) {
+                if (event.target === modal) {
+                    closeModalFunction();
+                }
+            });
+
+            // Save edited content
+            saveEdit.addEventListener('click', function () {
+                // Update the subtitle textarea with edited content
+                const editedContent = editTextarea.value;
+                subtitleTextarea.value = editedContent;
+
+                // Close the modal
+                closeModalFunction();
+
+                // Save to server
+                saveTranscriptToServer(editedContent);
+            });
+
+            // Save transcript to server function
+            function saveTranscriptToServer(transcriptContent) {
+                // Get CSRF token from cookie
+                function getCookie(name) {
+                    let cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        const cookies = document.cookie.split(';');
+                        for (let i = 0; i < cookies.length; i++) {
+                            const cookie = cookies[i].trim();
+                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+
+                const csrftoken = getCookie('csrftoken');
+
+                fetch(`/save-transcript/${profileId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken, // Add CSRF token
+                    },
+                    body: JSON.stringify({
+                        transcript: transcriptContent,
+                    })
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Server responded with status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Transcript saved successfully:', data);
+                        showToast(editSuccessToast);
+                    })
+                    .catch(error => {
+                        console.error('Error saving transcript:', error);
+                        showToast(editErrorToast);
+                    });
+            }
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function (event) {
+                if (modal.style.display === 'block') {
+                    // ESC key closes modal
+                    if (event.key === 'Escape') {
+                        closeModalFunction();
+                    }
+
+                    // Ctrl+Enter saves changes
+                    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+                        saveEdit.click();
+                    }
+                }
+            });
+        });
+    </script>
+
+    {% csrf_token %}
+</body>
+
+</html>

@@ -1,0 +1,164 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VidScribe - Unlock Your Video's Voice</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'index.css' %}">
+</head>
+
+<body>
+    <div class="noise-overlay"></div>
+    <div class="floating-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+        <div class="shape shape3"></div>
+    </div>
+
+    <header>
+        <div class="logo-container">
+            <div class="logo-icon">
+                <span class="play-triangle"></span>
+                <span class="sound-wave"></span>
+            </div>
+            <h1>Vid<span class="accent">Scribe</span></h1>
+        </div>
+        <p class="tagline">Transform spoken words into written brilliance</p>
+        <nav>
+            <a href="#what-it-does" class="nav-link">Capabilities</a>
+            <a href="#how-to-use" class="nav-link">Process</a>
+            <a href="#get-started" class="nav-link">Begin</a>
+        </nav>
+    </header>
+
+    <section id="hero">
+        <div class="hero-content">
+            <h2 class="hero-title">Where Video Meets Language</h2>
+            <p class="hero-description">Transcribe, translate, and transform your video content with unparalleled
+                accuracy.</p>
+            <div class="scroll-indicator">
+                <span>Explore</span>
+                <div class="scroll-arrow"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="what-it-does">
+        <h2>Unparalleled <span class="accent">Capabilities</span></h2>
+        <p class="section-intro">VidScribe elevates your video content through advanced AI-powered transcription and
+            translation technology.</p>
+
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon accuracy-icon"></div>
+                <h3>Neural-Enhanced Accuracy</h3>
+                <p>Our algorithm captures nuance, dialect variations, and technical terminology with remarkable
+                    precision.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon language-icon"></div>
+                <h3>Global Language Matrix</h3>
+                <p>Support for 94+ languages with cultural context preservation and idiomatic translation.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon speed-icon"></div>
+                <h3>Quantum Processing</h3>
+                <p>Experience transcription speeds 5x faster than industry standard with our parallel processing engine.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-to-use">
+        <h2>Streamlined <span class="accent">Process</span></h2>
+        <p class="section-intro">Three seamless steps between your video and perfect transcription.</p>
+
+        <div class="process-timeline">
+            <div class="process-step">
+                <div class="step-number">01</div>
+                <div class="step-content">
+                    <h3>Upload</h3>
+                    <p>Drag-and-drop your video or select from cloud storage. We support all major formats up to 10GB.
+                    </p>
+                </div>
+            </div>
+            <div class="process-step">
+                <div class="step-number">02</div>
+                <div class="step-content">
+                    <h3>Configure</h3>
+                    <p>Choose your source language, target language, and fine-tune transcription parameters to your
+                        needs.</p>
+                </div>
+            </div>
+            <div class="process-step">
+                <div class="step-number">03</div>
+                <div class="step-content">
+                    <h3>Transform</h3>
+                    <p>Our AI engine processes your video, delivering editable transcripts in your preferred format.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="get-started">
+        <h2>Begin Your <span class="accent">Transformation</span></h2>
+        <p class="section-intro">Ready to convert spoken brilliance into written perfection?</p>
+
+        <div class="cta-container">
+
+            {% if user.is_authenticated %}
+            <a href="upload" class="cta-button">
+                <span class="cta-text">Launch VidScribe</span>
+                <span class="cta-arrow">→</span>
+            </a>
+            {% else %}
+            <a href="login" class="cta-button">
+                <span class="cta-text">Launch VidScribe</span>
+                <span class="cta-arrow">→</span>
+            </a>
+            {% endif %}
+
+            <div class="cta-subtext">No credit card required for your first 60 minutes</div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h3>Vid<span class="accent">Scribe</span></h3>
+            </div>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Support</a>
+            </div>
+            <div class="footer-copyright">
+                © 2025 VidScribe Technologies. All rights reserved.
+            </div>
+        </div>
+    </footer>
+</body>
+{% if success %}
+<div class="video-container">
+    <h3>Your translated video:</h3>
+    <video id="video-player" width="720" height="480" controls>
+        <source src="{{ video_url }}" type="video/mp4">
+        <track label="Subtitles" kind="subtitles" srclang="{{ target_lang }}" src="{{ subtitle_url }}" default>
+        Your browser does not support the video tag.
+    </video>
+</div>
+
+<style>
+    .video-container {
+        margin: 20px 0;
+        text-align: center;
+    }
+</style>
+{% endif %}
+
+</html>

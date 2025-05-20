@@ -1,0 +1,604 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VidScribe - Dashboard</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'dashboard.css' %}">
+</head>
+
+<body>
+    <div class="noise-overlay"></div>
+    <div class="floating-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+        <div class="shape shape3"></div>
+    </div>
+
+    <header>
+        <div class="logo-container">
+            <div class="logo-icon">
+                <span class="play-triangle"></span>
+                <span class="sound-wave"></span>
+            </div>
+            <h1>Vid<span class="accent">Scribe</span></h1>
+        </div>
+        <nav>
+            <a href="/" class="nav-link">Home</a>
+            <a href="/upload" class="nav-link">Upload</a>
+            <button class="logout-btn">Logout</button>
+        </nav>
+    </header>
+
+    <main class="dashboard-container">
+        <div class="dashboard-header">
+            <div class="welcome-section">
+                <h2>Welcome back, <span class="accent">{{ user.username }}</span></h2>
+                <p class="dashboard-stats">You have
+
+                    {% if transcriptions_length == 0 or transcriptions_length == 1%}
+
+                    <span class="stat-highlight">{{ transcriptions_length }}</span> transcription
+                    {% else %}
+                    <span class="stat-highlight">{{ transcriptions_length }}</span> transcriptions
+                    {% endif %}
+                    and <span class="stat-highlight">{{ storage_used }}</span> of storage used
+                </p>
+            </div>
+            <div class="action-buttons">
+                <a href="/upload" class="upload-new-btn">
+                    <span class="btn-icon plus-icon"></span>
+                    <span>New Transcription</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Left Column -->
+            <div class="dashboard-panel activity-panel">
+                <div class="panel-header">
+                    <h3>Recent Activity</h3>
+                    <div class="panel-actions">
+                        <button class="refresh-btn" title="Refresh">
+                            <span class="refresh-icon"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="activity-timeline">
+                    {% for activity in total_transcriptions %}
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-header">
+                                <span class="activity-title">{{ activity.audio }}</span>
+                                <span class="activity-time">{{ activity.time }}dd</span>
+                            </div>
+                            <p class="activity-description">ddsa{{ activity.description }}</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="empty-state">
+                        <div class="empty-icon"></div>
+                        <p>No recent activity found</p>
+                        <a href="/upload" class="empty-action">Upload your first video</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="dashboard-panel stats-panel">
+                <div class="panel-header">
+                    <h3>Usage Overview</h3>
+                    <div class="panel-actions">
+                        <div class="dropdown-container">
+                            <button class="dropdown-btn">
+                                This Month <span class="dropdown-arrow"></span>
+                            </button>
+                            <div class="dropdown-menu">
+                                <a href="#">This Week</a>
+                                <a href="#">This Month</a>
+                                <a href="#">This Year</a>
+                                <a href="#">All Time</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-cards">
+                <div class="stat-card">
+                    <div class="stat-icon files-icon"></div>
+                    <div class="stat-info">
+                        <h4>Total Files</h4>
+
+
+                        {% if transcriptions_length == 1 or transcriptions_length == 0 %}
+                        <p class="stat-value">{{ transcriptions_length }} file</p>
+
+                        {% else %}
+                        <p class="stat-value">{{ transcriptions_length }} file</p>
+                        {% endif %}
+
+
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon time-icon"></div>
+                    <div class="stat-info">
+                        <h4>Minutes Processed</h4>
+                        <p class="stat-value">{{ just_seconds }} sec</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon languages-icon"></div>
+                    <div class="stat-info">
+                        <h4>Languages Used</h4>
+                        <p class="stat-value">{{ unique_languages }}</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon storage-icon"></div>
+                    <div class="stat-info">
+                        <h4>Storage Used</h4>
+                        <p class="stat-value">{{ storage_used }} <span class="stat-max">/ {{ storage_limit }}</span></p>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: {{ storage_percentage }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Main content table -->
+        <div class="dashboard-panel transcriptions-panel">
+            <div class="panel-header">
+                <h3>Your Transcriptions</h3>
+                <div class="panel-actions">
+                    <div class="search-container">
+                        <input type="text" id="transcription-search" placeholder="Search transcriptions...">
+                        <span class="search-icon"></span>
+                    </div>
+                    <div class="filter-container">
+                        <button class="filter-btn">
+                            <span class="filter-icon"></span>
+                            <span>Filter</span>
+                        </button>
+                        <div class="filter-dropdown">
+                            <div class="filter-group">
+                                <h4>Status</h4>
+                                <label><input type="checkbox" checked> Completed</label>
+                                <label><input type="checkbox" checked> In Progress</label>
+                                <label><input type="checkbox" checked> Failed</label>
+                            </div>
+                            <div class="filter-group">
+                                <h4>Date Range</h4>
+                                <label><input type="radio" name="date-range" checked> All Time</label>
+                                <label><input type="radio" name="date-range"> Last Week</label>
+                                <label><input type="radio" name="date-range"> Last Month</label>
+                                <label><input type="radio" name="date-range"> Custom</label>
+                            </div>
+                            <div class="filter-actions">
+                                <button class="apply-filters">Apply</button>
+                                <button class="clear-filters">Clear</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="transcriptions-table-container">
+                <table class="transcriptions-table">
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-sort="title">Title <span class="sort-icon"></span></th>
+                            <th class="sortable" data-sort="created">Created <span class="sort-icon"></span></th>
+                            <th class="sortable" data-sort="duration">Duration <span class="sort-icon"></span></th>
+                            <th>Source Language</th>
+                            <th>Target Language</th>
+                            <th class="sortable" data-sort="status">Status <span class="sort-icon"></span></th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transcription in total_transcriptions %}
+                        <tr data-id="{{ transcription.id }}">
+                            <td class="transcription-title">
+                                <div class="video-thumbnail"
+                                    style="background-image: url({% if transcription.thumbnail %}{{ transcription.thumbnail }}{% else %}{% static 'images/thumbnail.jpg' %}{% endif %})">
+                                    <span class="duration-badge">{{ transcription.duration }}</span>
+                                </div>
+                                <div class="video-info">
+                                    <p class="video-title">{{ transcription.audio }}</p>
+                                    <p class="video-format">{{ transcription.format }}docx</p>
+                                </div>
+                            </td>
+                            <td>{{ transcription.created_at }}</td>
+                            <td>{{ transcription.duration }}</td>
+                            <td>{{ transcription.source_lang|capfirst }}</td>
+                            <td>{{ transcription.target_lang|capfirst }}</td>
+                            <td>
+                                <span
+                                    class="status-badge {% if transcription.status == 'completed' %}status-completed{% elif transcription.status == 'processing' %}status-processing{% elif transcription.status == 'failed' %}status-failed{% endif %}">
+                                    {{ transcription.status|capfirst }}
+                                    {% if transcription.status == 'processing' %}
+                                    <div class="processing-animation">
+                                        <div class="dot dot1"></div>
+                                        <div class="dot dot2"></div>
+                                        <div class="dot dot3"></div>
+                                    </div>
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td class="actions-cell">
+                                <div class="action-buttons">
+                                    {% if transcription.status == 'completed' %}
+                                    <button class="action-btn view-btn" title="View Transcription">
+                                        <span class="view-icon"></span>
+                                    </button>
+                                    <button class="action-btn download-btn" title="Download">
+                                        <span class="download-icon"></span>
+                                    </button>
+                                    <button class="action-btn share-btn" title="Share">
+                                        <span class="share-icon"></span>
+                                    </button>
+                                    {% elif transcription.status == 'processing' %}
+                                    <button class="action-btn cancel-btn" title="Cancel">
+                                        <span class="cancel-icon"></span>
+                                    </button>
+                                    {% elif transcription.status == 'failed' %}
+                                    <button class="action-btn retry-btn" title="Retry">
+                                        <span class="retry-icon"></span>
+                                    </button>
+                                    {% endif %}
+                                    <button class="action-btn delete-btn" title="Delete">
+                                        <span class="delete-icon"></span>
+                                    </button>
+                                    <button class="action-btn more-btn">
+                                        <span class="more-icon"></span>
+                                        <div class="more-dropdown">
+                                            <a href="#" class="dropdown-item">Edit Details</a>
+                                            <a href="#" class="dropdown-item">Add to Collection</a>
+                                            <a href="#" class="dropdown-item">Download Subtitles</a>
+                                            <a href="#" class="dropdown-item">Generate Transcript</a>
+                                            <a href="#" class="dropdown-item">Create Translation</a>
+                                        </div>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr class="empty-table-row">
+                            <td colspan="7">
+                                <div class="empty-state">
+                                    <div class="empty-icon"></div>
+                                    <p>No transcriptions found</p>
+                                    <a href="/upload" class="empty-action">Upload your first video</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if transcriptions_length > 10 %}
+            <div class="pagination">
+                <button class="page-btn prev-page" disabled>
+                    <span class="page-arrow prev-arrow"></span>
+                    Previous
+                </button>
+                <div class="page-numbers">
+                    <span class="page-number active">1</span>
+                    <span class="page-number">2</span>
+                    <span class="page-number">3</span>
+                    <span class="page-ellipsis">...</span>
+                    <span class="page-number">{{ total_pages }}</span>
+                </div>
+                <button class="page-btn next-page">
+                    Next
+                    <span class="page-arrow next-arrow"></span>
+                </button>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- Collection Modal -->
+    <div class="modal" id="collections-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Your Collections</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="collections-grid">
+                    <div class="collection-card">
+                        <div class="collection-header">
+                            <div class="collection-icon"></div>
+                            <h4>Course Lectures</h4>
+                        </div>
+                        <p class="collection-info">12 videos • Last updated 2 days ago</p>
+                        <button class="view-collection-btn">View Collection</button>
+                    </div>
+                    <div class="collection-card">
+                        <div class="collection-header">
+                            <div class="collection-icon"></div>
+                            <h4>Marketing Videos</h4>
+                        </div>
+                        <p class="collection-info">8 videos • Last updated 1 week ago</p>
+                        <button class="view-collection-btn">View Collection</button>
+                    </div>
+                    <div class="collection-card">
+                        <div class="collection-header">
+                            <div class="collection-icon"></div>
+                            <h4>Interviews</h4>
+                        </div>
+                        <p class="collection-info">5 videos • Last updated 3 days ago</p>
+                        <button class="view-collection-btn">View Collection</button>
+                    </div>
+                    <div class="collection-card add-collection">
+                        <div class="add-collection-icon"></div>
+                        <p>Create New Collection</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h3>Vid<span class="accent">Scribe</span></h3>
+            </div>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Support</a>
+            </div>
+            <div class="footer-copyright">
+                © 2025 VidScribe Technologies. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // Toggle more dropdown
+            const moreButtons = document.querySelectorAll('.more-btn');
+            moreButtons.forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const dropdown = this.querySelector('.more-dropdown');
+                    dropdown.classList.toggle('visible');
+
+                    // Close other dropdowns
+                    moreButtons.forEach(otherBtn => {
+                        if (otherBtn !== btn) {
+                            otherBtn.querySelector('.more-dropdown').classList.remove('visible');
+                        }
+                    });
+                });
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function () {
+                document.querySelectorAll('.more-dropdown').forEach(dropdown => {
+                    dropdown.classList.remove('visible');
+                });
+                document.querySelector('.filter-dropdown')?.classList.remove('visible');
+            });
+
+            // Filter dropdown toggle
+            const filterBtn = document.querySelector('.filter-btn');
+            if (filterBtn) {
+                filterBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    document.querySelector('.filter-dropdown').classList.toggle('visible');
+                });
+
+                document.querySelector('.filter-dropdown').addEventListener('click', function (e) {
+                    e.stopPropagation();
+                });
+            }
+
+            // Table sorting
+            const sortableHeaders = document.querySelectorAll('th.sortable');
+            sortableHeaders.forEach(header => {
+                header.addEventListener('click', function () {
+                    const sortField = this.getAttribute('data-sort');
+                    const isCurrentSortField = this.classList.contains('sort-asc') || this.classList.contains('sort-desc');
+
+                    // Reset all headers
+                    sortableHeaders.forEach(h => {
+                        h.classList.remove('sort-asc', 'sort-desc');
+                    });
+
+                    // Set new sort direction
+                    if (isCurrentSortField) {
+                        if (this.classList.contains('sort-asc')) {
+                            this.classList.add('sort-desc');
+                        } else {
+                            this.classList.add('sort-asc');
+                        }
+                    } else {
+                        this.classList.add('sort-asc');
+                    }
+
+                    // Here you would normally make an AJAX call to sort the table
+                    console.log(`Sorting by ${sortField} in ${this.classList.contains('sort-asc') ? 'ascending' : 'descending'} order`);
+                });
+            });
+
+            // Search functionality
+            const searchInput = document.getElementById('transcription-search');
+            if (searchInput) {
+                searchInput.addEventListener('input', function () {
+                    const searchTerm = this.value.toLowerCase();
+                    const rows = document.querySelectorAll('.transcriptions-table tbody tr:not(.empty-table-row)');
+
+                    rows.forEach(row => {
+                        const title = row.querySelector('.video-title').textContent.toLowerCase();
+                        const sourceLanguage = row.cells[3].textContent.toLowerCase();
+                        const targetLanguage = row.cells[4].textContent.toLowerCase();
+
+                        if (title.includes(searchTerm) || sourceLanguage.includes(searchTerm) || targetLanguage.includes(searchTerm)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+
+                    // Show empty state if no results
+                    const visibleRows = Array.from(rows).filter(row => row.style.display !== 'none');
+                    const emptyRow = document.querySelector('.empty-table-row');
+
+                    if (visibleRows.length === 0 && rows.length > 0) {
+                        if (!emptyRow) {
+                            const tbody = document.querySelector('.transcriptions-table tbody');
+                            const newEmptyRow = document.createElement('tr');
+                            newEmptyRow.className = 'empty-table-row search-empty';
+                            newEmptyRow.innerHTML = `
+                                <td colspan="7">
+                                    <div class="empty-state">
+                                        <div class="empty-icon search-empty-icon"></div>
+                                        <p>No results found for "${searchTerm}"</p>
+                                        <button class="empty-action clear-search">Clear Search</button>
+                                    </div>
+                                </td>
+                            `;
+                            tbody.appendChild(newEmptyRow);
+
+                            document.querySelector('.clear-search').addEventListener('click', function () {
+                                searchInput.value = '';
+                                searchInput.dispatchEvent(new Event('input'));
+                            });
+                        }
+                    } else if (document.querySelector('.search-empty')) {
+                        document.querySelector('.search-empty').remove();
+                    }
+                });
+            }
+
+            // Show collections modal
+            document.querySelectorAll('.dropdown-item').forEach(item => {
+                if (item.textContent === 'Add to Collection') {
+                    item.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        document.getElementById('collections-modal').classList.add('visible');
+                    });
+                }
+            });
+
+            // Close modal
+            document.querySelector('.close-modal').addEventListener('click', function () {
+                document.getElementById('collections-modal').classList.remove('visible');
+            });
+
+            // Close modal when clicking outside
+            document.getElementById('collections-modal').addEventListener('click', function (e) {
+                if (e.target === this) {
+                    this.classList.remove('visible');
+                }
+            });
+
+            // Progress animations for processing items
+            const processingAnimations = document.querySelectorAll('.processing-animation');
+            processingAnimations.forEach(animation => {
+                // This will automatically animate due to CSS animations
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Usage Overview dropdown (This Month)
+            const dropdownBtn = document.querySelector('.dropdown-btn');
+            if (dropdownBtn) {
+                dropdownBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const container = this.closest('.dropdown-container');
+                    container.classList.toggle('open');
+
+                    // Close other dropdowns
+                    document.querySelectorAll('.dropdown-container.open').forEach(otherDropdown => {
+                        if (otherDropdown !== container) {
+                            otherDropdown.classList.remove('open');
+                        }
+                    });
+                });
+            }
+
+            // Filter dropdown
+            const filterBtn = document.querySelector('.filter-btn');
+            if (filterBtn) {
+                filterBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const container = this.closest('.filter-container');
+                    container.classList.toggle('open');
+
+                    // Close other dropdowns
+                    document.querySelectorAll('.dropdown-container.open').forEach(dropdown => {
+                        dropdown.classList.remove('open');
+                    });
+                });
+
+                // Prevent clicks inside filter dropdown from closing it
+                document.querySelector('.filter-dropdown').addEventListener('click', function (e) {
+                    e.stopPropagation();
+                });
+            }
+
+            // More dropdown in action buttons
+            const moreButtons = document.querySelectorAll('.more-btn');
+            moreButtons.forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    this.classList.toggle('open');
+
+                    // Close other more dropdowns
+                    moreButtons.forEach(otherBtn => {
+                        if (otherBtn !== btn) {
+                            otherBtn.classList.remove('open');
+                        }
+                    });
+
+                    // Close other types of dropdowns
+                    document.querySelectorAll('.dropdown-container.open, .filter-container.open').forEach(dropdown => {
+                        dropdown.classList.remove('open');
+                    });
+                });
+            });
+
+            // Close all dropdowns when clicking outside
+            document.addEventListener('click', function () {
+                document.querySelectorAll('.dropdown-container.open, .filter-container.open, .more-btn.open').forEach(dropdown => {
+                    dropdown.classList.remove('open');
+                });
+            });
+
+            // Advanced toggle for filter options
+            const advancedToggle = document.querySelector('.advanced-toggle');
+            if (advancedToggle) {
+                advancedToggle.addEventListener('click', function () {
+                    this.classList.toggle('open');
+                    const settings = this.nextElementSibling;
+                    if (settings.classList.contains('open')) {
+                        settings.classList.remove('open');
+                    } else {
+                        settings.classList.add('open');
+                    }
+                });
+            }
+
+            // The rest of your existing JavaScript...
+            // (Table sorting, search functionality, etc.)
+        });
+
+    </script>
+</body>
+
+</html>

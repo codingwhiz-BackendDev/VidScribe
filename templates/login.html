@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - VidScribe</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'index.css' %}">
+    <link rel="stylesheet" href="{% static 'auth.css' %}">
+</head>
+
+<body>
+    <div class="noise-overlay"></div>
+    <div class="floating-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+        <div class="shape shape3"></div>
+    </div>
+
+    <header>
+        <div class="logo-container">
+            <div class="logo-icon">
+                <span class="play-triangle"></span>
+                <span class="sound-wave"></span>
+            </div>
+            <h1>Vid<span class="accent">Scribe</span></h1>
+        </div>
+        <p class="tagline">Transform spoken words into written brilliance</p>
+    </header>
+
+    <section id="auth-section">
+        <div class="auth-container">
+            <div class="auth-card">
+                <h2 class="auth-title">Log <span class="accent">In</span></h2>
+                <p class="auth-subtitle">Welcome back to VidScribe</p>
+
+                <form class="auth-form" method="post">
+                    {% csrf_token %}
+
+                    {% if error_message %}
+                    <div class="auth-error">
+                        {{ error_message }}
+                    </div>
+                    {% endif %}
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        <div class="password-options">
+                            <a href="" class="forgot-password">Forgot password?</a>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="auth-button">
+                        <span class="button-text">Log In</span>
+                    </button>
+                </form>
+
+                <div class="auth-divider">
+                    <span>Or</span>
+                </div>
+
+                <a href="" class="google-auth-button">
+                    <div class="google-icon"></div>
+                    <span>Continue with Google</span>
+                </a>
+
+                <div class="auth-redirect">
+                    Don't have an account? <a href="{% url 'register' %}">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h3>Vid<span class="accent">Scribe</span></h3>
+            </div>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Support</a>
+            </div>
+            <div class="footer-copyright">
+                © 2025 VidScribe Technologies. All rights reserved.
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

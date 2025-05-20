@@ -1,0 +1,561 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VidScribe - Upload Video</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'upload.css' %}">
+
+</head>
+
+<body>
+    <div class="noise-overlay"></div>
+    <div class="floating-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+        <div class="shape shape3"></div>
+    </div>
+
+    <header>
+        <div class="logo-container">
+            <div class="logo-icon">
+                <span class="play-triangle"></span>
+                <span class="sound-wave"></span>
+            </div>
+            <h1>Vid<span class="accent">Scribe</span></h1>
+        </div>
+        <nav>
+            <a href="/" class="nav-link">Home</a>
+            <a href="/dashboard" class="nav-link">Dashboard</a>
+            <button class="logout-btn">Logout</button>
+        </nav>
+    </header>
+
+    <main class="upload-container">
+        <div class="upload-card">
+            <h2>Transform Your <span class="accent">Video</span></h2>
+            <p class="upload-intro">Upload your video, select languages, and watch the magic happen.</p>
+
+            <div class="upload-steps">
+                <div class="step active">
+                    <div class="step-indicator">1</div>
+                    <span>Upload</span>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-indicator">2</div>
+                    <span>Process</span>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-indicator">3</div>
+                    <span>Download</span>
+                </div>
+            </div>
+
+            <form action="" method="POST" class="upload-form" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="upload-drop-area">
+                    <div class="upload-icon"></div>
+                    <p>Drag & drop your video file</p>
+                    <p class="upload-subtitle">or</p>
+                    <label for="video-upload" class="upload-button">Browse Files</label>
+                    <input type="file" required name="video" id="video-upload" accept="video/*" class="file-input">
+                    <p class="file-format">Supported formats: MP4, MOV, AVI, WMV (max 10GB)</p>
+                </div>
+
+                <div class="selected-file-container">
+                    <div class="selected-file">
+                        <div class="file-preview"></div>
+                        <div class="file-info">
+                            <p class="file-name">No file selected</p>
+                            <div class="file-actions">
+                                <button type="button" class="remove-file-btn">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="language-options">
+                    <div class="language-option">
+                        <label for="source-language">Source Language</label>
+                        <div class="custom-select">
+                            <select id="source-language" name="source-language" required>
+                                <option value="" disabled selected>Select language</option>
+                                <option value="auto">Auto-detect</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="language-option">
+                        <label for="target-language">Target Language</label>
+                        <div class="custom-select">
+                            <select id="target-language" name="target-language" required>
+                                <option value="" disabled selected>Select language</option>
+                                <option value="en">English</option>
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                                <option value="de">German</option>
+                                <option value="it">Italian</option>
+                                <option value="pt">Portuguese</option>
+                                <option value="ru">Russian</option>
+                                <option value="ja">Japanese</option>
+                                <option value="zh">Chinese (Mandarin)</option>
+                                <option value="ko">Korean</option>
+                                <option value="ar">Arabic</option>
+                                <option value="af">Afrikaans</option>
+                                <option value="sq">Albanian</option>
+                                <option value="am">Amharic</option>
+                                <option value="hy">Armenian</option>
+                                <option value="az">Azerbaijani</option>
+                                <option value="bjs">Bajan</option>
+                                <option value="rm">Balkan Gipsy</option>
+                                <option value="eu">Basque</option>
+                                <option value="be">Bielarusian</option>
+                                <option value="bem">Bemba</option>
+                                <option value="bn">Bengali</option>
+                                <option value="bi">Bislama</option>
+                                <option value="bs">Bosnian</option>
+                                <option value="br">Breton</option>
+                                <option value="bg">Bulgarian</option>
+                                <option value="ca">Catalan</option>
+                                <option value="ceb">Cebuano</option>
+                                <option value="ny">Chichewa</option>
+                                <option value="ch">Chamorro</option>
+                                <option value="zh-CN">Chinese (Simplified)</option>
+                                <option value="zh-TW">Chinese (Traditional)</option>
+                                <option value="zdj">Comorian</option>
+                                <option value="cop">Coptic</option>
+                                <option value="hr">Croatian</option>
+                                <option value="cs">Czech</option>
+                                <option value="da">Danish</option>
+                                <option value="nl">Dutch</option>
+                                <option value="dz">Dzongkha</option>
+                                <option value="eo">Esperanto</option>
+                                <option value="et">Estonian</option>
+                                <option value="fn">Fanagalo</option>
+                                <option value="fo">Faroese</option>
+                                <option value="fi">Finnish</option>
+                                <option value="fy">Frisian</option>
+                                <option value="gl">Galician</option>
+                                <option value="ka">Georgian</option>
+                                <option value="el">Greek</option>
+                                <option value="gu">Gujarati</option>
+                                <option value="ha">Hausa</option>
+                                <option value="haw">Hawaiian</option>
+                                <option value="he">Hebrew</option>
+                                <option value="hi">Hindi</option>
+                                <option value="hmn">Hmong</option>
+                                <option value="hu">Hungarian</option>
+                                <option value="is">Icelandic</option>
+                                <option value="ig">Igbo</option>
+                                <option value="id">Indonesian</option>
+                                <option value="iu">Inuktitut</option>
+                                <option value="ga">Irish</option>
+                                <option value="jv">Javanese</option>
+                                <option value="kea">Kabuverdian</option>
+                                <option value="kab">Kabylian</option>
+                                <option value="kn">Kannada</option>
+                                <option value="kk">Kazakh</option>
+                                <option value="km">Khmer</option>
+                                <option value="rw">Kinyarwanda</option>
+                                <option value="rn">Kirundi</option>
+                                <option value="ku">Kurdish</option>
+                                <option value="ckb">Kurdish Sorani</option>
+                                <option value="ky">Kyrgyz</option>
+                                <option value="lo">Lao</option>
+                                <option value="la">Latin</option>
+                                <option value="lv">Latvian</option>
+                                <option value="lt">Lithuanian</option>
+                                <option value="lb">Luxembourgish</option>
+                                <option value="mk">Macedonian</option>
+                                <option value="mg">Malagasy</option>
+                                <option value="ms">Malay</option>
+                                <option value="ml">Malayalam</option>
+                                <option value="dv">Maldivian</option>
+                                <option value="mt">Maltese</option>
+                                <option value="gv">Manx Gaelic</option>
+                                <option value="mi">Maori</option>
+                                <option value="mr">Marathi</option>
+                                <option value="mh">Marshallese</option>
+                                <option value="men">Mende</option>
+                                <option value="mn">Mongolian</option>
+                                <option value="my">Myanmar</option>
+                                <option value="ne">Nepali</option>
+                                <option value="niu">Niuean</option>
+                                <option value="no">Norwegian</option>
+                                <option value="or">Odia</option>
+                                <option value="pau">Palauan</option>
+                                <option value="pa">Panjabi</option>
+                                <option value="pap">Papiamentu</option>
+                                <option value="ps">Pashto</option>
+                                <option value="pi">Pijin</option>
+                                <option value="fa">Persian</option>
+                                <option value="pl">Polish</option>
+                                <option value="qu">Quechua</option>
+                                <option value="ro">Romanian</option>
+                                <option value="sm">Samoan</option>
+                                <option value="gd">Scots Gaelic</option>
+                                <option value="sr">Serbian</option>
+                                <option value="st">Sesotho</option>
+                                <option value="sn">Shona</option>
+                                <option value="sd">Sindhi</option>
+                                <option value="si">Sinhala</option>
+                                <option value="sk">Slovak</option>
+                                <option value="sl">Slovenian</option>
+                                <option value="so">Somali</option>
+                                <option value="su">Sundanese</option>
+                                <option value="sw">Swahili</option>
+                                <option value="sv">Swedish</option>
+                                <option value="de-ch">Swiss German</option>
+                                <option value="tl">Tagalog</option>
+                                <option value="tg">Tajik</option>
+                                <option value="tmh">Tamashek</option>
+                                <option value="ta">Tamil</option>
+                                <option value="tt">Tatar</option>
+                                <option value="te">Telugu</option>
+                                <option value="tet">Tetum</option>
+                                <option value="th">Thai</option>
+                                <option value="bo">Tibetan</option>
+                                <option value="ti">Tigrinya</option>
+                                <option value="tpi">Tok Pisin</option>
+                                <option value="tkl">Tokelau</option>
+                                <option value="to">Tonga</option>
+                                <option value="tn">Tswana</option>
+                                <option value="tr">Turkish</option>
+                                <option value="tk">Turkmen</option>
+                                <option value="tvl">Tuvalu</option>
+                                <option value="uk">Ukrainian</option>
+                                <option value="ppk">Uma</option>
+                                <option value="ur">Urdu</option>
+                                <option value="ug">Uyghur</option>
+                                <option value="uz">Uzbek</option>
+                                <option value="vi">Vietnamese</option>
+                                <option value="wls">Wallisian</option>
+                                <option value="cy">Welsh</option>
+                                <option value="wo">Wolof</option>
+                                <option value="xh">Xhosa</option>
+                                <option value="yi">Yiddish</option>
+                                <option value="yo">Yoruba</option>
+                                <option value="zu">Zulu</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="advanced-options">
+                    <div class="advanced-toggle">
+                        <span>Advanced Options</span>
+                        <div class="toggle-icon"></div>
+                    </div>
+                    <div class="advanced-settings">
+                        <div class="setting-option">
+                            <label for="transcription-quality">Transcription Quality</label>
+                            <div class="custom-select">
+                                <select id="transcription-quality" name="quality">
+                                    <option value="standard">Standard</option>
+                                    <option value="premium" selected>Premium</option>
+                                    <option value="ultra">Ultra</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="setting-option">
+                            <label for="format">Output Format</label>
+                            <div class="custom-select">
+                                <select id="format" name="format">
+                                    <option value="txt">Plain Text (.txt)</option>
+                                    <option value="srt" selected>Subtitles (.srt)</option>
+                                    <option value="vtt">Web Subtitles (.vtt)</option>
+                                    <option value="docx">Word Document (.docx)</option>
+                                    <option value="pdf">PDF format (.pdf)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="setting-option">
+                            <div class="checkbox-container">
+                                <input type="checkbox" id="timestamps" name="timestamps" checked>
+                                <label for="timestamps">Include timestamps</label>
+                            </div>
+                        </div>
+                        <div class="setting-option">
+                            <div class="checkbox-container">
+                                <input type="checkbox" id="speaker-id" name="speaker-id">
+                                <label for="speaker-id">Speaker identification</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" id="transcribe-btn" class="cta-button">
+                    <span class="cta-text">Start Transcription</span>
+                    <span class="cta-arrow">→</span>
+                </button>
+            </form>
+
+            <br>
+
+            {% if user_profile %}
+            <div class="media-container">
+                <div class="audio-player">
+                    <audio id="audio-element" controls>
+                        <source src="{{ audio_url }}" type="audio/mp3">
+                        <track id="subtitle-track" kind="subtitles" src="{{ subtitle_url }}"
+                            srclang="{{ target_language }}" label="{{ target_language_name }}" default>
+                        Your browser does not support the audio tag.
+                    </audio>
+                    <div class="audio-visualization">
+                        <div class="wave-container">
+                            <div class="waveform"></div>
+                        </div>
+                        <div class="timestamp">00:00 / 00:00</div>
+                    </div>
+                    <div class="player-controls">
+                        <div class="control-group">
+                            <button id="toggle-subtitles" class="control-button active">
+                                <span class="control-icon subtitle-icon"></span>
+                                <span class="control-label">Subtitles</span>
+                            </button>
+                            <div class="custom-select">
+                                <select id="subtitle-language">
+                                    <option value="{{ target_lang }}" selected>{{ target_language_name }}</option>
+                                    <option value="{{ source_lang }}">{{ source_language_name }}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subtitle Preview Section -->
+                <div class="subtitle-preview visible">
+                    <h3>Subtitle Preview</h3>
+                    <textarea id="subtitle-preview-text"
+                        readonly>{{ subtitle_preview|default:"Loading subtitles..." }}</textarea>
+                    <a href="{% url 'view_subtitle' user_subtitle.id %}" class="view-subtitles-btn">
+                        View Full Subtitles
+                        <span class="cta-arrow">→</span>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h3>Vid<span class="accent">Scribe</span></h3>
+            </div>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Support</a>
+            </div>
+            <div class="footer-copyright">
+                © 2025 VidScribe Technologies. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/6.6.4/wavesurfer.min.js"></script>
+    <script>
+        // JavaScript for file upload functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            const fileInput = document.getElementById('video-upload');
+            const dropArea = document.querySelector('.upload-drop-area');
+            const fileNameDisplay = document.querySelector('.file-name');
+            const selectedFileContainer = document.querySelector('.selected-file-container');
+            const removeFileBtn = document.querySelector('.remove-file-btn');
+
+            // File drop functionality
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight() {
+                dropArea.classList.add('highlight');
+            }
+
+            function unhighlight() {
+                dropArea.classList.remove('highlight');
+            }
+
+            dropArea.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                fileInput.files = files;
+                updateFileInfo();
+            }
+
+            // File selection via browse button
+            fileInput.addEventListener('change', updateFileInfo);
+
+            function updateFileInfo() {
+                if (fileInput.files.length > 0) {
+                    const fileName = fileInput.files[0].name;
+                    fileNameDisplay.textContent = fileName;
+                    selectedFileContainer.classList.add('has-file');
+                    dropArea.classList.add('has-file');
+                } else {
+                    fileNameDisplay.textContent = 'No file selected';
+                    selectedFileContainer.classList.remove('has-file');
+                    dropArea.classList.remove('has-file');
+                }
+            }
+
+            // Remove file
+            removeFileBtn.addEventListener('click', function () {
+                fileInput.value = '';
+                updateFileInfo();
+            });
+
+            // Advanced options toggle
+            const advancedToggle = document.querySelector('.advanced-toggle');
+            const advancedSettings = document.querySelector('.advanced-settings');
+
+            advancedToggle.addEventListener('click', function () {
+                advancedSettings.classList.toggle('open');
+                advancedToggle.classList.toggle('open');
+            });
+
+            const audioElement = document.getElementById('audio-element');
+            if (audioElement) {
+                // Create WaveSurfer instance
+                const wavesurfer = WaveSurfer.create({
+                    container: '.waveform',
+                    waveColor: '#4f46e5',
+                    progressColor: '#818cf8',
+                    cursorColor: '#c084fc',
+                    barWidth: 2,
+                    barRadius: 3,
+                    cursorWidth: 1,
+                    height: 60,
+                    barGap: 3,
+                    responsive: true
+                });
+
+                // Load audio
+                wavesurfer.load('{{ audio_url }}');
+
+                // Update timestamp display
+                const timeDisplay = document.querySelector('.timestamp');
+
+                function formatTime(seconds) {
+                    const minutes = Math.floor(seconds / 60);
+                    const secs = Math.floor(seconds % 60);
+                    return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                }
+
+                wavesurfer.on('audioprocess', function () {
+                    const currentTime = wavesurfer.getCurrentTime();
+                    const duration = wavesurfer.getDuration() || 0;
+                    timeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+                });
+
+                wavesurfer.on('ready', function () {
+                    const duration = wavesurfer.getDuration();
+                    timeDisplay.textContent = `00:00 / ${formatTime(duration)}`;
+
+                    // Connect audio element to wavesurfer
+                    audioElement.addEventListener('play', () => {
+                        wavesurfer.play();
+                    });
+
+                    audioElement.addEventListener('pause', () => {
+                        wavesurfer.pause();
+                    });
+
+                    wavesurfer.on('play', () => {
+                        if (audioElement.paused) audioElement.play();
+                    });
+
+                    wavesurfer.on('pause', () => {
+                        if (!audioElement.paused) audioElement.pause();
+                    });
+
+                    // Make seek work in both directions
+                    wavesurfer.on('seek', (position) => {
+                        const seekTo = position * wavesurfer.getDuration();
+                        audioElement.currentTime = seekTo;
+                    });
+
+                    audioElement.addEventListener('seeked', () => {
+                        const position = audioElement.currentTime / wavesurfer.getDuration();
+                        wavesurfer.seekTo(position);
+                    });
+                });
+
+
+
+                // Handle subtitle toggle
+                const subtitleToggle = document.getElementById('toggle-subtitles');
+                const subtitleTrack = document.getElementById('subtitle-track');
+                const subtitlePreview = document.querySelector('.subtitle-preview');
+
+                if (subtitleToggle && subtitleTrack) {
+                    let subtitlesEnabled = true;
+
+                    subtitleToggle.addEventListener('click', () => {
+                        subtitlesEnabled = !subtitlesEnabled;
+                        if (subtitlesEnabled) {
+                            subtitleTrack.track.mode = 'showing';
+                            subtitleToggle.classList.add('active');
+                            if (subtitlePreview) subtitlePreview.classList.add('visible');
+                        } else {
+                            subtitleTrack.track.mode = 'hidden';
+                            subtitleToggle.classList.remove('active');
+                            if (subtitlePreview) subtitlePreview.classList.remove('visible');
+                        }
+                    });
+
+                    // Load and update subtitle preview
+                    if (subtitleTrack.track) {
+                        subtitleTrack.track.addEventListener('cuechange', function () {
+                            const previewTextarea = document.getElementById('subtitle-preview-text');
+                            if (previewTextarea && this.activeCues && this.activeCues.length > 0) {
+                                previewTextarea.value = this.activeCues[0].text;
+                            }
+                        });
+                    }
+                }
+
+                // If subtitles data is available, fetch and load preview
+                fetch('{{ subtitle_url }}')
+                    .then(response => response.text())
+                    .then(data => {
+                        const previewTextarea = document.getElementById('subtitle-preview-text');
+                        if (previewTextarea) {
+                            // Extract a brief preview (first few lines) from the SRT/VTT file
+                            const lines = data.split('\n').slice(0, 10);
+                            const preview = lines.join('\n') + (lines.length < data.split('\n').length ? '\n...' : '');
+                            previewTextarea.value = preview;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading subtitle preview:', error);
+                    });
+            }
+        });
+    </script>
+</body>
+
+</html>
