@@ -27,8 +27,9 @@ from docx import Document
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 
+api_key = os.getenv('GEMINI_API_KEY')
  
-genai.configure(api_key='AIzaSyDiFqUa10wIgRLDflTcT4m5Z7KnVKXcSm8')
+genai.configure(api_key=api_key)
 
 # Language mapping for translation and detection
 language_names = {
